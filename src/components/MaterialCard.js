@@ -14,7 +14,10 @@ export function MaterialCard({ item }) {
     <View style={[styles.card, baixoEstoque && styles.cardAlerta]}>
       <View style={styles.info}>
         <Text style={styles.nome}>{item.nome}</Text>
-        <Text style={styles.id}>#{item.id}</Text>
+        <View style={styles.meta}>
+          <Text style={styles.id}>#{item.id}</Text>
+          {baixoEstoque && <Text style={styles.alerta}>Baixo estoque</Text>}
+        </View>
       </View>
       <View style={[styles.badge, baixoEstoque && styles.badgeAlerta]}>
         <Text style={styles.badgeTexto}>{item.quantidade}</Text>
@@ -54,9 +57,19 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 2,
   },
+  meta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   id: {
     color: '#64748B',
     fontSize: 12,
+  },
+  alerta: {
+    color: '#F59E0B',
+    fontSize: 11,
+    fontWeight: '600',
   },
   badge: {
     backgroundColor: '#0F172A',
