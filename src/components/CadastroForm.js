@@ -56,6 +56,7 @@ export function CadastroForm({ onCadastroSucesso }) {
       <Text style={styles.label}>Nome do Material</Text>
       <TextInput
         testID="input-nome"
+        accessibilityLabel="Nome do material"
         style={styles.input}
         placeholder="Ex: Papel A4, Caneta azul..."
         placeholderTextColor="#475569"
@@ -67,6 +68,7 @@ export function CadastroForm({ onCadastroSucesso }) {
       <Text style={styles.label}>Quantidade</Text>
       <TextInput
         testID="input-quantidade"
+        accessibilityLabel="Quantidade em estoque"
         style={styles.input}
         placeholder="Ex: 100"
         placeholderTextColor="#475569"
@@ -78,6 +80,7 @@ export function CadastroForm({ onCadastroSucesso }) {
 
       <TouchableOpacity
         testID="btn-cadastrar"
+        accessibilityLabel="Cadastrar material"
         style={[styles.botao, salvando && styles.botaoDesativado]}
         onPress={handleCadastrar}
         disabled={salvando}
