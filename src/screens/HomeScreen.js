@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { CadastroForm } from '../components/CadastroForm';
 import { ListaEstoque } from '../components/ListaEstoque';
+import { Legenda } from '../components/Legenda';
 import { useMateriais } from '../hooks/useMateriais';
 
 /**
@@ -41,6 +42,9 @@ export function HomeScreen() {
 
         {/* Divisor */}
         <View style={styles.divisor} />
+
+        {/* Legenda de cores */}
+        <Legenda />
 
         {/* Lista de materiais */}
         <ListaEstoque
