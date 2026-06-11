@@ -81,7 +81,7 @@ export const API_BASE_URL = 'https://SEU_ID.mockapi.io/api/v1';
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/SEU_USUARIO/AlmoxarifadoApp.git
+git clone https://github.com/Ricardogonzaga98/AtividadeLeo.git
 cd AlmoxarifadoApp
 
 # 2. Instale as dependências
@@ -125,6 +125,14 @@ Este projeto segue o padrão **Conventional Commits**:
 
 ---
 
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
 ## 👨‍💻 Autor
 
-Desenvolvido como projeto prático de Desenvolvimento Mobile.
+**Ricardo Gonzaga** — projeto prático de Desenvolvimento Mobile.
+
+Repositório: [github.com/Ricardogonzaga98/AtividadeLeo](https://github.com/Ricardogonzaga98/AtividadeLeo)
