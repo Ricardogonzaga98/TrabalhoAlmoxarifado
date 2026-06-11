@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { LIMITE_BAIXO_ESTOQUE } from '../constants';
 
 /**
  * Componente de cartão que exibe informações de um material do estoque.
+ * Destaca visualmente itens com quantidade abaixo do limite configurado.
  * @param {{ item: { nome: string, quantidade: number } }} props
  */
 export function MaterialCard({ item }) {
-  const baixoEstoque = Number(item.quantidade) <= 5;
+  const baixoEstoque = Number(item.quantidade) <= LIMITE_BAIXO_ESTOQUE;
 
   return (
     <View style={[styles.card, baixoEstoque && styles.cardAlerta]}>
