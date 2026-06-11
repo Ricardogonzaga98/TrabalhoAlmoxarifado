@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   StyleSheet,
+  RefreshControl,
 } from 'react-native';
 import { MaterialCard } from './MaterialCard';
 
@@ -42,6 +43,14 @@ export function ListaEstoque({ materiais, loading, erro, onRecarregar }) {
       data={materiais}
       keyExtractor={(item) => String(item.id)}
       renderItem={({ item }) => <MaterialCard item={item} />}
+      refreshControl={
+        <RefreshControl
+          refreshing={loading}
+          onRefresh={onRecarregar}
+          tintColor="#22D3EE"
+          colors={['#22D3EE']}
+        />
+      }
       contentContainerStyle={
         materiais.length === 0 ? styles.listaVazia : styles.lista
       }
