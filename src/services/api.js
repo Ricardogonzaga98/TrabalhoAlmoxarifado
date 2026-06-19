@@ -28,3 +28,40 @@ export async function postMaterial(material) {
   }
   return response.json();
 }
+
+/**
+ * Atualiza um material existente via PUT na MockAPI.
+ * @param {string} id
+ * @param {{ nome?: string, quantidade?: number }} dados
+ * @returns {Promise<Object>} material atualizado
+ */
+export async function putMaterial(id, dados) {
+  const response = await fetch(`${API_BASE_URL}${ENDPOINT_MATERIAIS}/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dados),
+  });
+  if (!response.ok) {
+    throw new Error(`Erro ao atualizar material: ${response.status}`);
+  }
+  return response.json();
+}
+
+/**
+ * Remove um material via DELETE na MockAPI.
+ * @param {string} id
+ * @returns {Promise<void>}
+ */
+export async function deleteMaterial(id) {
+  const response = await fetch(`${API_BASE_URL}${ENDPOINT_MATERIAIS}/${id}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error(`Erro ao excluir material: ${response.status}`);
+  }
+  try {
+    await response.json();
+  } catch (err) {
+    // MockAPI retorna sem corpo em DELETE. Não há ação necessária.
+  }
+}

@@ -16,7 +16,7 @@ import { MaterialCard } from './MaterialCard';
  *
  * @param {{ materiais: Array, loading: boolean, erro: string|null, onRecarregar: () => void }} props
  */
-export function ListaEstoque({ materiais, loading, erro, onRecarregar }) {
+export function ListaEstoque({ materiais, loading, erro, onRecarregar, onEditar, onExcluir }) {
   if (loading) {
     return (
       <View style={styles.centrado}>
@@ -42,7 +42,13 @@ export function ListaEstoque({ materiais, loading, erro, onRecarregar }) {
       testID="lista-materiais"
       data={materiais}
       keyExtractor={(item) => String(item.id)}
-      renderItem={({ item }) => <MaterialCard item={item} />}
+      renderItem={({ item }) => (
+        <MaterialCard
+          item={item}
+          onEditar={onEditar}
+          onExcluir={onExcluir}
+        />
+      )}
       refreshControl={
         <RefreshControl
           refreshing={loading}

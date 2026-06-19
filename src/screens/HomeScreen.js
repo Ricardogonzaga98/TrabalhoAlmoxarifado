@@ -18,7 +18,14 @@ import { useMateriais } from '../hooks/useMateriais';
  * Combina o formulário de cadastro com a lista de estoque.
  */
 export function HomeScreen() {
-  const { materiais, loading, erro, recarregar } = useMateriais();
+  const {
+    materiais,
+    loading,
+    erro,
+    recarregar,
+    editarMaterial,
+    deletarMaterial,
+  } = useMateriais();
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -52,6 +59,8 @@ export function HomeScreen() {
           loading={loading}
           erro={erro}
           onRecarregar={recarregar}
+          onEditar={editarMaterial}
+          onExcluir={deletarMaterial}
         />
       </KeyboardAvoidingView>
     </SafeAreaView>

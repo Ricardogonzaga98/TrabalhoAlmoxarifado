@@ -19,7 +19,7 @@ Aplicativo mobile de controle de estoque de insumos, desenvolvido em **React Nat
 | Tecnologia | Versão | Finalidade |
 |---|---|---|
 | React Native | 0.85.x | Framework mobile |
-| Expo | ~56.x | Ambiente de desenvolvimento |
+- **Expo** | ~56.x | Ambiente de desenvolvimento para web-only |
 | JavaScript (ES2022) | — | Linguagem principal |
 | MockAPI.io | — | Backend simulado (REST API) |
 | Fetch API | nativa | Comunicação HTTP |
@@ -89,12 +89,11 @@ npm install
 
 # 3. Configure a URL da MockAPI em src/constants.js
 
-# 4. Inicie o servidor de desenvolvimento
+# 4. Inicie o servidor web
 npm start
-
-# 5. Escaneie o QR Code com o aplicativo Expo Go
-#    ou pressione 'a' para Android / 'i' para iOS (emulador)
 ```
+
+> Este projeto é configurado para rodar somente em **web** com Expo.
 
 ---
 
