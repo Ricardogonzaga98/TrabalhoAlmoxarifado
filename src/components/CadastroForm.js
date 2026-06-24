@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  Platform,
 } from 'react-native';
 import { postMaterial } from '../services/api';
 
@@ -28,11 +29,11 @@ export function CadastroForm({ onCadastroSucesso }) {
 
   const handleCadastrar = async () => {
     if (!nome.trim()) {
-      Alert.alert('Campo obrigatório', 'Informe o nome do material.');
+      Platform.OS === 'web' ? window.alert('Informe o nome do material.') : Alert.alert('Campo obrigatório', 'Informe o nome do material.');
       return;
     }
     if (!quantidade || isNaN(Number(quantidade)) || Number(quantidade) < 0) {
-      Alert.alert('Campo inválido', 'Informe uma quantidade válida.');
+      Platform.OS === 'web' ? window.alert('Informe uma quantidade válida.') : Alert.alert('Campo inválido', 'Informe uma quantidade válida.');
       return;
     }
 
@@ -41,9 +42,10 @@ export function CadastroForm({ onCadastroSucesso }) {
       await postMaterial({ nome: nome.trim(), quantidade: Number(quantidade) });
       limparFormulario();
       onCadastroSucesso();
-      Alert.alert('Sucesso!', 'Material cadastrado no estoque.');
+      Platform.OS === 'web' ? window.alert('Material cadastrado no estoque.') : Alert.alert('Sucesso!', 'Material cadastrado no estoque.');
     } catch (e) {
-      Alert.alert('Erro', e.message || 'Não foi possível cadastrar o material.');
+      const msg = e.message || 'Não foi possível cadastrar o material.';
+      Platform.OS === 'web' ? window.alert(msg) : Alert.alert('Erro', msg);
     } finally {
       setSalvando(false);
     }

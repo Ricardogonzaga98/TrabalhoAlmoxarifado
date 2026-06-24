@@ -15,9 +15,23 @@ async function fetchSeguro(url, opcoes) {
   }
 }
 
+function mapearMaterial(item) {
+  return {
+    id: item.campo1 || item.id,
+    nome: item.nome,
+    quantidade: Number(item.quantidade),
+  };
+}
+
 export async function getMateriais() {
-  const response = await fetchSeguro(`${API_BASE_URL}${ENDPOINT_MATERIAIS}`);
-  return response.json();
+  try {
+    const response = await fetchSeguro(`${API_BASE_URL}${ENDPOINT_MATERIAIS}`);
+    const dados = await response.json();
+    return dados.map(mapearMaterial);
+  } catch (erro) {
+    if (erro.message.includes('404')) return [];
+    throw erro;
+  }
 }
 
 export async function postMaterial(material) {
@@ -26,7 +40,8 @@ export async function postMaterial(material) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(material),
   });
-  return response.json();
+  const dados = await response.json();
+  return mapearMaterial(dados);
 }
 
 export async function putMaterial(id, dados) {
@@ -35,7 +50,8 @@ export async function putMaterial(id, dados) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dados),
   });
-  return response.json();
+  const resultado = await response.json();
+  return mapearMaterial(resultado);
 }
 
 export async function deleteMaterial(id) {

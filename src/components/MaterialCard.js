@@ -6,16 +6,15 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Platform,
 } from 'react-native';
 import { LIMITE_ESTOQUE_CRITICO } from '../constants';
+import { validarRetirada } from '../utils/validarRetirada';
 
-/**
- * Componente de cartão que exibe informações de um material do estoque.
- * Permite editar e excluir itens do inventário.
- * @param {{ item: { id: string, nome: string, quantidade: number }, onEditar: Function, onExcluir: Function }} props
- */
 export function MaterialCard({ item, onEditar, onExcluir }) {
   const [editMode, setEditMode] = useState(false);
+  const [retiradaMode, setRetiradaMode] = useState(false);
+  const [quantidadeRetirada, setQuantidadeRetirada] = useState('');
   const [nome, setNome] = useState(item.nome);
   const [quantidade, setQuantidade] = useState(String(item.quantidade));
 
@@ -31,12 +30,12 @@ export function MaterialCard({ item, onEditar, onExcluir }) {
     const quantidadeNumero = Number(quantidade);
 
     if (!nomeTrim) {
-      Alert.alert('Erro', 'O nome do material não pode ficar em branco.');
+      Platform.OS === 'web' ? window.alert('O nome do material não pode ficar em branco.') : Alert.alert('Erro', 'O nome do material não pode ficar em branco.');
       return;
     }
 
     if (!quantidade || quantidadeNumero <= 0) {
-      Alert.alert('Erro', 'Informe uma quantidade válida maior que zero.');
+      Platform.OS === 'web' ? window.alert('Informe uma quantidade válida maior que zero.') : Alert.alert('Erro', 'Informe uma quantidade válida maior que zero.');
       return;
     }
 
@@ -44,15 +43,32 @@ export function MaterialCard({ item, onEditar, onExcluir }) {
     setEditMode(false);
   };
 
+  const handleRetirada = () => {
+    const qtd = Number(quantidadeRetirada);
+    if (!validarRetirada(Number(item.quantidade), qtd)) {
+      Platform.OS === 'web' ? window.alert('Quantidade de retirada inválida.') : Alert.alert('Erro', 'Quantidade de retirada inválida.');
+      return;
+    }
+    onEditar(item.id, { quantidade: Number(item.quantidade) - qtd });
+    setQuantidadeRetirada('');
+    setRetiradaMode(false);
+  };
+
   const handleExcluir = () => {
-    Alert.alert(
-      'Confirmação',
-      `Deseja excluir o material "${item.nome}" do estoque?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Excluir', style: 'destructive', onPress: () => onExcluir(item.id) },
-      ]
-    );
+    if (Platform.OS === 'web') {
+      if (window.confirm(`Deseja excluir o material "${item.nome}" do estoque?`)) {
+        onExcluir(item.id);
+      }
+    } else {
+      Alert.alert(
+        'Confirmação',
+        `Deseja excluir o material "${item.nome}" do estoque?`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Excluir', style: 'destructive', onPress: () => onExcluir(item.id) },
+        ]
+      );
+    }
   };
 
   return (
@@ -104,6 +120,31 @@ export function MaterialCard({ item, onEditar, onExcluir }) {
             <Text style={styles.cancelText}>Cancelar</Text>
           </TouchableOpacity>
         </View>
+      ) : retiradaMode ? (
+        <View style={styles.retiradaContainer}>
+          <TextInput
+            testID="input-retirada"
+            style={styles.inputRetirada}
+            value={quantidadeRetirada}
+            onChangeText={(v) => setQuantidadeRetirada(v.replace(/[^0-9]/g, ''))}
+            keyboardType="numeric"
+            placeholder="Qtd"
+            placeholderTextColor="#94A3B8"
+          />
+          <TouchableOpacity
+            testID="btn-baixar"
+            style={styles.baixarButton}
+            onPress={handleRetirada}
+          >
+            <Text style={styles.buttonText}>Baixar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={() => { setRetiradaMode(false); setQuantidadeRetirada(''); }}
+          >
+            <Text style={styles.cancelText}>Cancelar</Text>
+          </TouchableOpacity>
+        </View>
       ) : (
         <View style={styles.rightColumn}>
           <View style={[styles.badge, estoqueCritico && styles.badgeAlerta]}>
@@ -111,6 +152,13 @@ export function MaterialCard({ item, onEditar, onExcluir }) {
             <Text style={styles.badgeLabel}>un.</Text>
           </View>
           <View style={styles.actionsContainer}>
+            <TouchableOpacity
+              style={styles.retirarButton}
+              onPress={() => setRetiradaMode(true)}
+              testID="btn-retirar"
+            >
+              <Text style={styles.buttonText}>Retirar</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
               onPress={() => setEditMode(true)}
@@ -249,5 +297,32 @@ const styles = StyleSheet.create({
   cancelText: {
     color: '#F8FAFC',
     fontWeight: '700',
+  },
+  retiradaContainer: {
+    alignItems: 'flex-end',
+    gap: 6,
+  },
+  inputRetirada: {
+    backgroundColor: '#0F172A',
+    color: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#334155',
+    borderRadius: 10,
+    padding: 8,
+    minWidth: 70,
+    textAlign: 'center',
+  },
+  baixarButton: {
+    backgroundColor: '#F59E0B',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+  retirarButton: {
+    backgroundColor: '#F59E0B',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    marginTop: 4,
   },
 });
