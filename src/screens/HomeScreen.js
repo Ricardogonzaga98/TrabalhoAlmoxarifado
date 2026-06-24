@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
+  TextInput,
   StyleSheet,
   StatusBar,
   SafeAreaView,
@@ -13,10 +14,6 @@ import { ListaEstoque } from '../components/ListaEstoque';
 import { Legenda } from '../components/Legenda';
 import { useMateriais } from '../hooks/useMateriais';
 
-/**
- * Tela principal do aplicativo de Almoxarifado.
- * Combina o formulário de cadastro com a lista de estoque.
- */
 export function HomeScreen() {
   const {
     materiais,
@@ -27,6 +24,14 @@ export function HomeScreen() {
     deletarMaterial,
   } = useMateriais();
 
+  const [busca, setBusca] = useState('');
+
+  const materiaisFiltrados = useMemo(() => {
+    if (!busca.trim()) return materiais;
+    const termo = busca.toLowerCase().trim();
+    return materiais.filter((m) => m.nome.toLowerCase().includes(termo));
+  }, [materiais, busca]);
+
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar barStyle="light-content" backgroundColor="#0F172A" />
@@ -35,7 +40,6 @@ export function HomeScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
-        {/* Cabeçalho */}
         <View style={styles.header}>
           <Text style={styles.headerIcone}>🏭</Text>
           <View>
@@ -44,18 +48,31 @@ export function HomeScreen() {
           </View>
         </View>
 
-        {/* Formulário de cadastro */}
         <CadastroForm onCadastroSucesso={recarregar} />
 
-        {/* Divisor */}
         <View style={styles.divisor} />
 
-        {/* Legenda de cores */}
+        <View style={styles.buscaContainer}>
+          <TextInput
+            testID="input-busca"
+            accessibilityLabel="Pesquisar material"
+            style={styles.inputBusca}
+            placeholder="Pesquisar material..."
+            placeholderTextColor="#475569"
+            value={busca}
+            onChangeText={setBusca}
+            autoCorrect={false}
+          />
+          <Text testID="total-itens" style={styles.totalItens}>
+            {materiaisFiltrados.length}{' '}
+            {materiaisFiltrados.length === 1 ? 'item' : 'itens'}
+          </Text>
+        </View>
+
         <Legenda />
 
-        {/* Lista de materiais */}
         <ListaEstoque
-          materiais={materiais}
+          materiais={materiaisFiltrados}
           loading={loading}
           erro={erro}
           onRecarregar={recarregar}
@@ -102,5 +119,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#1E293B',
     marginHorizontal: 16,
     marginVertical: 4,
+  },
+  buscaContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 4,
+  },
+  inputBusca: {
+    backgroundColor: '#1E293B',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#334155',
+    color: '#F1F5F9',
+    fontSize: 15,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  totalItens: {
+    color: '#94A3B8',
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 6,
+    textAlign: 'right',
   },
 });

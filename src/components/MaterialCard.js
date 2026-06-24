@@ -7,7 +7,7 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import { LIMITE_BAIXO_ESTOQUE } from '../constants';
+import { LIMITE_ESTOQUE_CRITICO } from '../constants';
 
 /**
  * Componente de cartão que exibe informações de um material do estoque.
@@ -24,7 +24,7 @@ export function MaterialCard({ item, onEditar, onExcluir }) {
     setQuantidade(String(item.quantidade));
   }, [item.nome, item.quantidade]);
 
-  const baixoEstoque = Number(item.quantidade) <= LIMITE_BAIXO_ESTOQUE;
+  const estoqueCritico = Number(item.quantidade) < LIMITE_ESTOQUE_CRITICO;
 
   const handleSalvar = () => {
     const nomeTrim = nome.trim();
@@ -56,7 +56,10 @@ export function MaterialCard({ item, onEditar, onExcluir }) {
   };
 
   return (
-    <View style={[styles.card, baixoEstoque && styles.cardAlerta]}>
+    <View
+      style={[styles.card, estoqueCritico && styles.cardCritico]}
+      accessibilityLabel={estoqueCritico ? 'estoque-critico' : undefined}
+    >
       <View style={styles.info}>
         {editMode ? (
           <>
@@ -83,7 +86,7 @@ export function MaterialCard({ item, onEditar, onExcluir }) {
             <Text style={styles.nome}>{item.nome}</Text>
             <View style={styles.meta}>
               <Text style={styles.id}>#{item.id}</Text>
-              {baixoEstoque && <Text style={styles.alerta}>Baixo estoque</Text>}
+              {estoqueCritico && <Text style={styles.alerta}>Estoque crítico</Text>}
             </View>
           </>
         )}
@@ -103,7 +106,7 @@ export function MaterialCard({ item, onEditar, onExcluir }) {
         </View>
       ) : (
         <View style={styles.rightColumn}>
-          <View style={[styles.badge, baixoEstoque && styles.badgeAlerta]}>
+          <View style={[styles.badge, estoqueCritico && styles.badgeAlerta]}>
             <Text style={styles.badgeTexto}>{item.quantidade}</Text>
             <Text style={styles.badgeLabel}>un.</Text>
           </View>
@@ -147,8 +150,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 2,
   },
-  cardAlerta: {
-    borderLeftColor: '#F59E0B',
+  cardCritico: {
+    backgroundColor: '#3B1A1A',
+    borderLeftColor: '#EF4444',
   },
   info: {
     flex: 1,

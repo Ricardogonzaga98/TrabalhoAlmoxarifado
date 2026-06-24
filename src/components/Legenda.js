@@ -1,10 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { LIMITE_BAIXO_ESTOQUE } from '../constants';
+import { LIMITE_ESTOQUE_CRITICO } from '../constants';
 
-/**
- * Legenda visual explicando os indicadores de cor do estoque.
- */
 export function Legenda() {
   return (
     <View style={styles.container}>
@@ -14,8 +11,8 @@ export function Legenda() {
       </View>
       <View style={styles.separador} />
       <View style={styles.item}>
-        <View style={[styles.dot, { backgroundColor: '#F59E0B' }]} />
-        <Text style={styles.texto}>Baixo estoque (≤ {LIMITE_BAIXO_ESTOQUE} un.)</Text>
+        <View style={[styles.dot, { backgroundColor: '#EF4444' }]} />
+        <Text style={styles.texto}>Estoque crítico ({'<'} {LIMITE_ESTOQUE_CRITICO} un.)</Text>
       </View>
     </View>
   );

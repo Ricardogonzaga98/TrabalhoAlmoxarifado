@@ -69,13 +69,7 @@ export function ListaEstoque({ materiais, loading, erro, onRecarregar, onEditar,
           </Text>
         </View>
       }
-      ListHeaderComponent={
-        materiais.length > 0 ? (
-          <Text style={styles.cabecalho}>
-            {materiais.length} {materiais.length === 1 ? 'item' : 'itens'} em estoque
-          </Text>
-        ) : null
-      }
+      ListHeaderComponent={null}
     />
   );
 }
