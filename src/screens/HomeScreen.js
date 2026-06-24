@@ -102,7 +102,6 @@ export function HomeScreen() {
           </View>
           <Text testID="total-itens" style={styles.totalItens}>
             {materiaisFiltrados.length} {materiaisFiltrados.length === 1 ? 'item' : 'itens'}
-            {busca.trim() ? ' encontrados' : ' em estoque'}
           </Text>
         </View>
 
