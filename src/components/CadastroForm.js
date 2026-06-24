@@ -6,34 +6,24 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
-  Alert,
-  Platform,
 } from 'react-native';
 import { postMaterial } from '../services/api';
 
-/**
- * Formulário de cadastro de novos materiais.
- * Após sucesso no POST, chama onCadastroSucesso para atualizar a lista.
- *
- * @param {{ onCadastroSucesso: () => void }} props
- */
-export function CadastroForm({ onCadastroSucesso }) {
+export function CadastroForm({ onCadastroSucesso, onToast }) {
   const [nome, setNome] = useState('');
   const [quantidade, setQuantidade] = useState('');
   const [salvando, setSalvando] = useState(false);
+  const [aberto, setAberto] = useState(false);
 
-  const limparFormulario = () => {
-    setNome('');
-    setQuantidade('');
-  };
+  const limparFormulario = () => { setNome(''); setQuantidade(''); };
 
   const handleCadastrar = async () => {
     if (!nome.trim()) {
-      Platform.OS === 'web' ? window.alert('Informe o nome do material.') : Alert.alert('Campo obrigatório', 'Informe o nome do material.');
+      onToast && onToast('erro', 'Informe o nome do material.');
       return;
     }
     if (!quantidade || isNaN(Number(quantidade)) || Number(quantidade) < 0) {
-      Platform.OS === 'web' ? window.alert('Informe uma quantidade válida.') : Alert.alert('Campo inválido', 'Informe uma quantidade válida.');
+      onToast && onToast('erro', 'Informe uma quantidade válida.');
       return;
     }
 
@@ -42,10 +32,9 @@ export function CadastroForm({ onCadastroSucesso }) {
       await postMaterial({ nome: nome.trim(), quantidade: Number(quantidade) });
       limparFormulario();
       onCadastroSucesso();
-      Platform.OS === 'web' ? window.alert('Material cadastrado no estoque.') : Alert.alert('Sucesso!', 'Material cadastrado no estoque.');
+      onToast && onToast('sucesso', `"${nome.trim()}" cadastrado com sucesso!`);
     } catch (e) {
-      const msg = e.message || 'Não foi possível cadastrar o material.';
-      Platform.OS === 'web' ? window.alert(msg) : Alert.alert('Erro', msg);
+      onToast && onToast('erro', e.message || 'Não foi possível cadastrar.');
     } finally {
       setSalvando(false);
     }
@@ -53,47 +42,54 @@ export function CadastroForm({ onCadastroSucesso }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Novo Material</Text>
-
-      <Text style={styles.label}>Nome do Material</Text>
-      <TextInput
-        testID="input-nome"
-        accessibilityLabel="Nome do material"
-        style={styles.input}
-        placeholder="Ex: Papel A4, Caneta azul..."
-        placeholderTextColor="#475569"
-        value={nome}
-        onChangeText={setNome}
-        autoCorrect={false}
-      />
-
-      <Text style={styles.label}>Quantidade</Text>
-      <TextInput
-        testID="input-quantidade"
-        accessibilityLabel="Quantidade em estoque"
-        style={styles.input}
-        placeholder="Ex: 100"
-        placeholderTextColor="#475569"
-        value={quantidade}
-        onChangeText={setQuantidade}
-        keyboardType="numeric"
-        returnKeyType="done"
-      />
-
-      <TouchableOpacity
-        testID="btn-cadastrar"
-        accessibilityLabel="Cadastrar material"
-        style={[styles.botao, salvando && styles.botaoDesativado]}
-        onPress={handleCadastrar}
-        disabled={salvando}
-        activeOpacity={0.8}
-      >
-        {salvando ? (
-          <ActivityIndicator color="#0F172A" />
-        ) : (
-          <Text style={styles.botaoTexto}>Cadastrar</Text>
-        )}
+      <TouchableOpacity style={styles.headerBtn} onPress={() => setAberto(!aberto)} activeOpacity={0.8}>
+        <Text style={styles.titulo}>{'📋'} Novo Material</Text>
+        <Text style={styles.chevron}>{aberto ? '▲' : '▼'}</Text>
       </TouchableOpacity>
+
+      {aberto && (
+        <View style={styles.formBody}>
+          <Text style={styles.label}>{'📝'} Nome do Material</Text>
+          <TextInput
+            testID="input-nome"
+            accessibilityLabel="Nome do material"
+            style={styles.input}
+            placeholder="Ex: Papel A4, Caneta azul..."
+            placeholderTextColor="#475569"
+            value={nome}
+            onChangeText={setNome}
+            autoCorrect={false}
+          />
+
+          <Text style={styles.label}>{'🔢'} Quantidade</Text>
+          <TextInput
+            testID="input-quantidade"
+            accessibilityLabel="Quantidade em estoque"
+            style={styles.input}
+            placeholder="Ex: 100"
+            placeholderTextColor="#475569"
+            value={quantidade}
+            onChangeText={setQuantidade}
+            keyboardType="numeric"
+            returnKeyType="done"
+          />
+
+          <TouchableOpacity
+            testID="btn-cadastrar"
+            accessibilityLabel="Cadastrar material"
+            style={[styles.botao, salvando && styles.botaoDesativado]}
+            onPress={handleCadastrar}
+            disabled={salvando}
+            activeOpacity={0.8}
+          >
+            {salvando ? (
+              <ActivityIndicator color="#0F172A" />
+            ) : (
+              <Text style={styles.botaoTexto}>{'➕'} Cadastrar</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
@@ -102,19 +98,26 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#1E293B',
     margin: 16,
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: '#334155',
+    overflow: 'hidden',
+  },
+  headerBtn: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
   },
   titulo: {
     color: '#22D3EE',
     fontSize: 14,
     fontWeight: '700',
-    letterSpacing: 1.5,
+    letterSpacing: 1,
     textTransform: 'uppercase',
-    marginBottom: 16,
   },
+  chevron: { color: '#64748B', fontSize: 12 },
+  formBody: { paddingHorizontal: 16, paddingBottom: 16 },
   label: {
     color: '#94A3B8',
     fontSize: 12,
@@ -140,9 +143,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 4,
   },
-  botaoDesativado: {
-    opacity: 0.6,
-  },
+  botaoDesativado: { opacity: 0.6 },
   botaoTexto: {
     color: '#0F172A',
     fontSize: 15,
